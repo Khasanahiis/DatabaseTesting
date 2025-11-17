@@ -2,7 +2,9 @@ package com.praktikum.database.testing.library.config;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.sql.*;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.Properties;
 import java.util.logging.Logger;
 
@@ -122,11 +124,13 @@ public class DatabaseConfig {
         try (Connection conn = getConnection()) {
             // Check jika koneksi valid dan tidak closed
             boolean isValid = conn != null && !conn.isClosed();
+
             if (isValid) {
                 logger.info("Test koneksi database: BERHASIL");
             } else {
                 logger.severe("Test koneksi database: GAGAL - Koneksi null atau closed");
             }
+
             return isValid;
         } catch (SQLException e) {
             logger.severe("Test koneksi database: GAGAL - " + e.getMessage());
@@ -140,7 +144,8 @@ public class DatabaseConfig {
     public static void printDatabaseInfo() {
         try (Connection conn = getConnection()) {
             // Dapatkan metadata database
-            DatabaseMetaData metaData = conn.getMetaData();
+            var metaData = conn.getMetaData();
+
             logger.info("=== Informasi Database ===");
             logger.info("Product: " + metaData.getDatabaseProductName());
             logger.info("Version: " + metaData.getDatabaseProductVersion());
@@ -152,9 +157,17 @@ public class DatabaseConfig {
         }
     }
 
-    // Getter methods untuk testing
-    public static String getDbUrl() { return DB_URL; }
-    public static String getDbUsername() { return DB_USERNAME; }
-    public static String getDbPassword() { return DB_PASSWORD; }
-    public static String getDbDriver() { return DB_DRIVER; }
+    /**
+     * Getter untuk database URL (digunakan untuk testing)
+     */
+    public static String getDbUrl() {
+        return DB_URL;
+    }
+
+    /**
+     * Getter untuk database username (digunakan untuk testing)
+     */
+    public static String getDbUsername() {
+        return DB_USERNAME;
+    }
 }
